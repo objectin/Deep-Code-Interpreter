@@ -54,24 +54,28 @@ retriever.search_kwargs["k"] = 10
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 
-model = ChatOpenAI(model_name="gpt-4")  # switch to 'gpt-4'
+model = ChatOpenAI(model_name="gpt-3.5-turbo-16k")  # switch to 'gpt-4'
 qa = ConversationalRetrievalChain.from_llm(model, retriever=retriever)
 
 # %%
 chat_history = []
 
 def ask_db(question):
-    global chat_history
     result = qa({"question": question, "chat_history": chat_history})
     # print(f"-> **Question**: {question} \n")
     # print(f"**Answer**: {result['answer']} \n")
-    chat_history.append((question, result["answer"]))
-    result['answer']
+    
+    return (question, result["answer"])
 
 #%%
 
 def answer_from_db(text):
-    return ask_db(text)
+    global chat_history
+    ret = ask_db(text)
+
+    global chat_history
+    chat_history.append(ret)
+    return ret[1]
 
 with gr.Blocks() as demo:
     name = gr.Textbox(label="Code Questioner")
@@ -79,5 +83,9 @@ with gr.Blocks() as demo:
     greet_btn = gr.Button("Answer")
     greet_btn.click(fn=answer_from_db, inputs=name, outputs=output, api_name="answer_from_db")
 
+
+print(f"Testing hello world: {answer_from_db('What is nautilus trader?')}")
+
+# %%
 demo.queue()
 demo.launch(share=True)
