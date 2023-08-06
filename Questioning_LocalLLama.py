@@ -54,7 +54,7 @@ retriever.search_kwargs["k"] = 10
 from langchain.llms import HuggingFaceHub
 from langchain.chains import ConversationalRetrievalChain
 
-model = HuggingFaceHub(repo_id="togethercomputer/LLaMA-2-7B-32K", model_kwargs={"device_map": "auto"}, huggingfacehub_api_token=None)
+model = HuggingFaceHub(repo_id="togethercomputer/LLaMA-2-7B-32K", model_kwargs={"device_map": "auto"}, huggingfacehub_api_token='', cache=True, verbose=True)
 qa = ConversationalRetrievalChain.from_llm(model, retriever=retriever)
 
 # %%
@@ -72,8 +72,6 @@ def ask_db(question):
 def answer_from_db(text):
     global chat_history
     ret = ask_db(text)
-
-    global chat_history
     chat_history.append(ret)
     return ret[1]
 

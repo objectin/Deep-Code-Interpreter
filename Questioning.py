@@ -54,7 +54,7 @@ retriever.search_kwargs["k"] = 10
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 
-model = ChatOpenAI(model_name="gpt-3.5-turbo-16k")  # switch to 'gpt-4'
+model = ChatOpenAI(model_name="gpt-3.5-turbo")  # switch to 'gpt-4'
 qa = ConversationalRetrievalChain.from_llm(model, retriever=retriever)
 
 # %%
@@ -72,8 +72,6 @@ def ask_db(question):
 def answer_from_db(text):
     global chat_history
     ret = ask_db(text)
-
-    global chat_history
     chat_history.append(ret)
     return ret[1]
 
