@@ -9,7 +9,7 @@ import gradio as gr
 
 # %%
 git_pj_name = "nautilus_trader"
-subname = 'all-mpnet-base-v2_split_doc'
+subname = 'all-mpnet-base-v2_split_plusdoc'
 root_dir = f"./{git_pj_name}"
 username = "intuitionwith"  # replace with your username from app.activeloop.ai
 
@@ -47,9 +47,9 @@ db = DeepLake(
 # %%
 retriever = db.as_retriever()
 retriever.search_kwargs["distance_metric"] = "cos"
-retriever.search_kwargs["fetch_k"] = 500
+retriever.search_kwargs["fetch_k"] = 200
 retriever.search_kwargs["maximal_marginal_relevance"] = True
-retriever.search_kwargs["k"] = 50
+retriever.search_kwargs["k"] = 20
 
 # %%
 from langchain.chat_models import ChatOpenAI
