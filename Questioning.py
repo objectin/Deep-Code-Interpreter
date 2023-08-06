@@ -9,7 +9,7 @@ import gradio as gr
 
 # %%
 git_pj_name = "nautilus_trader"
-subname = 'all-MiniLM-L12-v2_splitted'
+subname = 'all-mpnet-base-v2_split_doc'
 root_dir = f"./{git_pj_name}"
 username = "intuitionwith"  # replace with your username from app.activeloop.ai
 
@@ -25,7 +25,7 @@ from langchain.vectorstores import DeepLake
 
 #embeddings = OpenAIEmbeddings(disallowed_special=())
 
-embeddings_model_name = "sentence-transformers/all-MiniLM-L12-v2"
+embeddings_model_name = "sentence-transformers/all-mpnet-base-v2"
 model_kwargs = {"device": "cuda"}
 
 embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name, model_kwargs=model_kwargs)
@@ -41,20 +41,21 @@ db = DeepLake(
     dataset_path=f"hub://{username}/{git_pj_name+'_'+subname}",
     read_only=True,
     embedding=embeddings,
+    runtime={"tensor_db": True}
 )
 
 # %%
 retriever = db.as_retriever()
-# retriever.search_kwargs["distance_metric"] = "cos"
-# retriever.search_kwargs["fetch_k"] = 100
-# retriever.search_kwargs["maximal_marginal_relevance"] = True
-# retriever.search_kwargs["k"] = 10
+retriever.search_kwargs["distance_metric"] = "cos"
+retriever.search_kwargs["fetch_k"] = 500
+retriever.search_kwargs["maximal_marginal_relevance"] = True
+retriever.search_kwargs["k"] = 50
 
 # %%
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 
-model = ChatOpenAI(model_name="gpt-4-32k", max_tokens=32000)  # switch to 'gpt-4'
+model = ChatOpenAI(model_name="gpt-3.5-turbo-16k", max_tokens=14000)  # switch to 'gpt-4'
 qa = ConversationalRetrievalChain.from_llm(model, retriever=retriever)
 
 # %%

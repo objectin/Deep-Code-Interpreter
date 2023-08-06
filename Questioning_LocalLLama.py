@@ -13,6 +13,8 @@ subname = 'all-MiniLM-L12-v2_splitted'
 root_dir = f"./{git_pj_name}"
 username = "intuitionwith"  # replace with your username from app.activeloop.ai
 
+with open('hf.key', 'r') as f:
+    hf_token = f.readline().strip()
 
 # os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
 # activeloop_token = getpass.getpass("Activeloop Token:")
@@ -41,6 +43,7 @@ db = DeepLake(
     dataset_path=f"hub://{username}/{git_pj_name+'_'+subname}",
     read_only=True,
     embedding=embeddings,
+    runtime={"tensor_db": True}
 )
 
 # %%
@@ -54,7 +57,7 @@ retriever.search_kwargs["k"] = 10
 from langchain.llms import HuggingFaceHub
 from langchain.chains import ConversationalRetrievalChain
 
-model = HuggingFaceHub(repo_id="togethercomputer/LLaMA-2-7B-32K", model_kwargs={"device_map": "auto"}, huggingfacehub_api_token='', cache=True, verbose=True)
+model = HuggingFaceHub(repo_id="togethercomputer/LLaMA-2-7B-32K", huggingfacehub_api_token=hf_token, verbose=True)
 qa = ConversationalRetrievalChain.from_llm(model, retriever=retriever)
 
 # %%
