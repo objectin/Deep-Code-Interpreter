@@ -13,10 +13,10 @@ subname = 'all-MiniLM-L12-v2_splitted'
 root_dir = f"./{git_pj_name}"
 username = "intuitionwith"  # replace with your username from app.activeloop.ai
 
-
-os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
-activeloop_token = getpass.getpass("Activeloop Token:")
-os.environ["ACTIVELOOP_TOKEN"] = activeloop_token
+with open('reader.key', 'r') as f:
+    os.environ["OPENAI_API_KEY"] = f.readline().strip()
+    activeloop_token = f.readline().strip()
+    os.environ["ACTIVELOOP_TOKEN"] = activeloop_token
 
 #%%
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -45,16 +45,16 @@ db = DeepLake(
 
 # %%
 retriever = db.as_retriever()
-retriever.search_kwargs["distance_metric"] = "cos"
-retriever.search_kwargs["fetch_k"] = 100
-retriever.search_kwargs["maximal_marginal_relevance"] = True
-retriever.search_kwargs["k"] = 10
+# retriever.search_kwargs["distance_metric"] = "cos"
+# retriever.search_kwargs["fetch_k"] = 100
+# retriever.search_kwargs["maximal_marginal_relevance"] = True
+# retriever.search_kwargs["k"] = 10
 
 # %%
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 
-model = ChatOpenAI(model_name="gpt-3.5-turbo")  # switch to 'gpt-4'
+model = ChatOpenAI(model_name="gpt-4-32k", max_tokens=32000)  # switch to 'gpt-4'
 qa = ConversationalRetrievalChain.from_llm(model, retriever=retriever)
 
 # %%
